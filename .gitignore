@@ -9,3 +9,6 @@ staticfiles/
 .DS_Store
 .vercel
 .env*
+
+# Agent skill symlinks (the real files live in .agents/, which is tracked)
+/.claude
