@@ -41,6 +41,11 @@ Hosted on Vercel (project `avchecklist`, region `fra1`) against a Neon Postgres
 database (`avchecklist-db`) provisioned through the Vercel Marketplace, which
 supplies `DATABASE_URL` automatically.
 
+Vercel detects Django natively and serves `avchecklist/wsgi.py` itself — it also
+runs `collectstatic` during the build. No `api/` entrypoint and no rewrites are
+needed; a catch-all rewrite actively breaks routing, because the rewritten path
+is what Django receives.
+
 ```bash
 vercel env pull                                   # refresh .env.local
 python3 scripts/manage_remote.py migrate          # migrate Neon, not local SQLite
