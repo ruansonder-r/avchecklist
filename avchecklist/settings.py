@@ -75,13 +75,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "avchecklist.wsgi.application"
 
+# Production is Neon Postgres, wired up by the Vercel integration; local dev
+# falls back to a SQLite file. conn_max_age=0 keeps each invocation from
+# holding a connection open, the same reason commoter uses a NullPool.
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        conn_health_checks=True,
+        conn_max_age=0,
     )
 }
+
+if "postgresql" in DATABASES["default"].get("ENGINE", ""):
+    # Neon's pooled connection string runs PgBouncer in transaction mode,
+    # which cannot keep server-side cursors open between statements.
+    DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -101,7 +108,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

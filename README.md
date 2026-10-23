@@ -9,6 +9,8 @@ A single-page Django checklist for AV setups, served at **av.ruansonder-r.com**.
   refresh and are private to that browser. Nothing is written to the database.
 - Sections and options are managed from the Django admin, which sits on an
   unguessable path (`DJANGO_ADMIN_URL`) and is not linked from the public page.
+  Production uses a different path to the local default — it is set only as a
+  Vercel environment variable, never committed here.
 
 ## Local development
 
@@ -32,3 +34,19 @@ python3 -m venv .venv
 | `DJANGO_DEBUG` | `true` / `false` | `true` |
 | `DJANGO_ADMIN_URL` | Path the admin is mounted on | `console-8f21c4b2/` |
 | `DATABASE_URL` | Postgres URL in production | local SQLite file |
+
+## Deployment
+
+Hosted on Vercel (project `avchecklist`, region `fra1`) against a Neon Postgres
+database (`avchecklist-db`) provisioned through the Vercel Marketplace, which
+supplies `DATABASE_URL` automatically.
+
+```bash
+vercel env pull                                   # refresh .env.local
+python3 scripts/manage_remote.py migrate          # migrate Neon, not local SQLite
+vercel --prod                                     # deploy
+```
+
+`scripts/manage_remote.py` runs any manage.py command against Neon's *unpooled*
+endpoint. Migrations are deliberately not part of the build — they are run
+explicitly, the same way commoter does it.
