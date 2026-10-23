@@ -46,11 +46,17 @@ runs `collectstatic` during the build. No `api/` entrypoint and no rewrites are
 needed; a catch-all rewrite actively breaks routing, because the rewritten path
 is what Django receives.
 
+Pushing to `main` deploys to production; pull requests get preview
+deployments. Migrations are **not** part of the build, so run them yourself
+before pushing a change that needs them:
+
 ```bash
 vercel env pull                                   # refresh .env.local
 python3 scripts/manage_remote.py migrate          # migrate Neon, not local SQLite
-vercel --prod                                     # deploy
+git push                                          # deploys main to production
 ```
+
+`vercel --prod` still works for deploying without a push.
 
 `scripts/manage_remote.py` runs any manage.py command against Neon's *unpooled*
 endpoint. Migrations are deliberately not part of the build — they are run
