@@ -1,0 +1,178 @@
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --border: #e3e5e9;
+  --text: #1b1d21;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-soft: #eaf0ff;
+  --shadow: 0 1px 2px rgba(16, 18, 23, 0.05), 0 6px 16px rgba(16, 18, 23, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171c;
+    --card: #1d2026;
+    --border: #2c3038;
+    --text: #e9eaee;
+    --muted: #9099a8;
+    --accent: #6a9bff;
+    --accent-soft: #232a3a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.25);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 72px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.clear-button {
+  flex: none;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 550;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.clear-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.clear-button:active { transform: translateY(1px); }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 18px 20px 8px;
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.count {
+  flex: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0 10px;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 8px 6px;
+  margin: 0 -6px;
+  border-radius: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.item:hover { background: var(--accent-soft); }
+
+.item input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.box {
+  flex: none;
+  width: 19px;
+  height: 19px;
+  margin-top: 2px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.item input:focus-visible + .box {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.item input:checked + .box {
+  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E") center/13px no-repeat;
+  border-color: var(--accent);
+}
+
+.text { transition: color 0.12s; }
+
+/* Ticked options stay exactly where they are — just struck through. */
+.item input:checked ~ .text {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 10px 0 14px;
+  margin: 0;
+}

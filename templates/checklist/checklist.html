@@ -1,0 +1,51 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>AV Checklist</title>
+  <link rel="stylesheet" href="{% static 'css/checklist.css' %}">
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <div>
+        <h1>AV Checklist</h1>
+        <p class="subtitle" id="overall-progress"></p>
+      </div>
+      <button type="button" id="clear-all" class="clear-button">Clear all</button>
+    </header>
+
+    {% for section in sections %}
+      <section class="card" data-section>
+        <div class="card-header">
+          <h2>{{ section.title }}</h2>
+          <span class="count" data-count></span>
+        </div>
+        {% if section.items.all %}
+          <ul class="items">
+            {% for item in section.items.all %}
+              <li>
+                <label class="item">
+                  <input type="checkbox" data-item-id="{{ item.id }}">
+                  <span class="box" aria-hidden="true"></span>
+                  <span class="text">{{ item.text }}</span>
+                </label>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="empty">No options in this section yet.</p>
+        {% endif %}
+      </section>
+    {% empty %}
+      <section class="card">
+        <p class="empty">Nothing on the checklist yet.</p>
+      </section>
+    {% endfor %}
+  </main>
+
+  <script src="{% static 'js/checklist.js' %}"></script>
+</body>
+</html>
