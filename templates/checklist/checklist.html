@@ -26,12 +26,22 @@
         {% if section.items.all %}
           <ul class="items">
             {% for item in section.items.all %}
-              <li>
+              <li class="row{% if item.guidance_html %} has-guidance{% endif %}">
                 <label class="item">
                   <input type="checkbox" data-item-id="{{ item.id }}">
                   <span class="box" aria-hidden="true"></span>
                   <span class="text">{{ item.text }}</span>
                 </label>
+                {% if item.guidance_html %}
+                  <button type="button" class="info" data-guidance-open
+                          aria-haspopup="dialog"
+                          title="How to do this"
+                          aria-label="How to: {{ item.text }}">
+                    <span aria-hidden="true">i</span>
+                  </button>
+                  {# Parked in a <template> so it stays inert until the pop-up needs it. #}
+                  <template data-guidance>{{ item.guidance_html }}</template>
+                {% endif %}
               </li>
             {% endfor %}
           </ul>
@@ -45,6 +55,18 @@
       </section>
     {% endfor %}
   </main>
+
+  <dialog id="guidance" class="guidance" aria-labelledby="guidance-title">
+    <div class="guidance-inner">
+      <header class="guidance-head">
+        <h2 id="guidance-title"></h2>
+        <button type="button" class="guidance-close" data-guidance-close aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </header>
+      <div class="guidance-body" id="guidance-body"></div>
+    </div>
+  </dialog>
 
   <script src="{% static 'js/checklist.js' %}"></script>
 </body>

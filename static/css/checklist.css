@@ -120,18 +120,86 @@ h2 {
   padding: 6px 0 10px;
 }
 
+/* The row holds the option itself plus, when there is guidance, the badge. */
+.row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin: 0 -6px;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.row:hover { background: var(--accent-soft); }
+
 .item {
+  flex: 1 1 auto;
   display: flex;
   align-items: flex-start;
   gap: 11px;
   padding: 8px 6px;
-  margin: 0 -6px;
-  border-radius: 7px;
   cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;   /* no iOS share sheet on a long press */
 }
 
-.item:hover { background: var(--accent-soft); }
+/* Long-press feedback: the row lights up and a bar fills over exactly as long
+   as the press needs to last, so the gesture never feels like a dead tap. */
+.row.is-pressing { background: var(--accent-soft); }
+
+.row.has-guidance::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0;
+}
+
+.row.has-guidance.is-pressing::after {
+  opacity: 1;
+  animation: press-fill var(--press-ms, 450ms) linear forwards;
+}
+
+@keyframes press-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* The ⓘ badge — the visible half of the long-press gesture. */
+.info {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 7px 2px 0 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font: italic 700 11px/1 Georgia, "Times New Roman", serif;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.info:hover,
+.info:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.info:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A ticked option's badge recedes along with its struck-through text. */
+.row:has(input:checked) .info { opacity: 0.45; }
 
 .item input {
   position: absolute;
@@ -175,4 +243,186 @@ h2 {
   font-size: 14px;
   padding: 10px 0 14px;
   margin: 0;
+}
+
+/* ------------------------------------------------------------ guidance pop-up */
+
+.guidance {
+  width: min(520px, calc(100vw - 32px));
+  max-height: min(80vh, 640px);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 16px 48px rgba(16, 18, 23, 0.22), 0 2px 8px rgba(16, 18, 23, 0.1);
+  overflow: hidden;
+}
+
+.guidance::backdrop {
+  background: rgba(12, 14, 18, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.guidance[open] { animation: pop-in 0.16s ease-out; }
+.guidance[open]::backdrop { animation: fade-in 0.16s ease-out; }
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+/* showModal() makes the page inert but not unscrollable. */
+html:has(dialog[open]) { overflow: hidden; }
+
+.guidance-inner {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.guidance-head {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 22px 13px;
+  border-bottom: 1px solid var(--border);
+}
+
+.guidance-head h2 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.guidance-close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: -4px -7px 0 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font: 400 22px/1 inherit;
+  cursor: pointer;
+}
+
+.guidance-close:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.guidance-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.guidance-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 22px 22px;
+  font-size: 15px;
+  overscroll-behavior: contain;
+}
+
+/* Markdown written in the admin lands in here. */
+.guidance-body > :first-child { margin-top: 0; }
+.guidance-body > :last-child { margin-bottom: 0; }
+
+.guidance-body p,
+.guidance-body ul,
+.guidance-body ol,
+.guidance-body pre,
+.guidance-body blockquote { margin: 0 0 12px; }
+
+.guidance-body h1,
+.guidance-body h2,
+.guidance-body h3,
+.guidance-body h4 {
+  margin: 18px 0 8px;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.guidance-body ul,
+.guidance-body ol { padding-left: 22px; }
+.guidance-body li { margin-bottom: 5px; }
+.guidance-body a { color: var(--accent); }
+
+.guidance-body code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+
+.guidance-body pre {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  overflow-x: auto;
+}
+
+.guidance-body pre code {
+  padding: 0;
+  background: none;
+}
+
+.guidance-body blockquote {
+  margin-left: 0;
+  padding-left: 13px;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+
+/* Markdown image embeds: ![caption](https://…/photo.jpg) */
+.guidance-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 4px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.guidance-body table {
+  display: block;
+  width: 100%;
+  margin: 0 0 12px;
+  border-collapse: collapse;
+  font-size: 14px;
+  overflow-x: auto;
+}
+
+.guidance-body th,
+.guidance-body td {
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.guidance-body hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row.has-guidance.is-pressing::after { animation: none; }
+  .guidance[open],
+  .guidance[open]::backdrop { animation: none; }
 }
