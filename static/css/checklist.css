@@ -250,8 +250,6 @@ h2 {
 .guidance {
   width: min(520px, calc(100vw - 32px));
   max-height: min(80vh, 640px);
-  display: flex;
-  flex-direction: column;
   padding: 0;
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -266,7 +264,16 @@ h2 {
   backdrop-filter: blur(2px);
 }
 
-.guidance[open] { animation: pop-in 0.16s ease-out; }
+/* Only ever give the pop-up a display on the open state. A closed <dialog>
+   is display:none in the UA sheet, and any author rule setting display on
+   the bare element beats that — leaving the closed pop-up rendered inline at
+   the bottom of the page. */
+.guidance[open] {
+  display: flex;
+  flex-direction: column;
+  animation: pop-in 0.16s ease-out;
+}
+
 .guidance[open]::backdrop { animation: fade-in 0.16s ease-out; }
 
 @keyframes pop-in {

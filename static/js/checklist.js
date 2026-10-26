@@ -206,6 +206,7 @@
   });
 
   dialog.addEventListener("close", function () {
+    titleEl.textContent = "";
     bodyEl.innerHTML = "";
     if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
     lastTrigger = null;
